@@ -85,14 +85,19 @@ module.exports = class Receive {
     // check greeting is here and is confident
     let greeting = this.firstEntity(event.message.nlp, "greetings");
     let message = event.message.text.trim().toLowerCase();
+    // Manual check if NLP is not activated 
+    const ListOfCommonGreetings = ["hi", "hello", "good morning"];
+    let manualGreetingCheck = ListOfCommonGreetings.includes(message);
 
     let response;
 
     if (
       (greeting && greeting.confidence > 0.8) ||
-      message.includes("start over")
+      message.includes("start over") ||
+      manualGreetingCheck
     ) {
-      response = Response.genNuxMessage(this.user);
+      // response = Response.genNuxMessage(this.user);
+      response = Response.genGreetingsResponse(this.user);
     } else if (Number(message)) {
       response = Order.handlePayload("ORDER_NUMBER");
     } else if (message.includes("#")) {

@@ -170,4 +170,14 @@ module.exports = class Response {
 
     return [welcome, guide, curation];
   }
+
+  static genGreetingsResponse(user){
+    const ResponsesToGreeting = ["How are you?", "I hope you're doing well", "I hope you're having a great day"];
+    const RandomlySelectedResponse = ResponsesToGreeting[Math.floor(Math.random() * ResponsesToGreeting.length)];
+    let response = {
+      text: `Hi ${user.firstName} ! ${RandomlySelectedResponse}`
+    };
+    
+    return response;
+  }
 };
