@@ -29,7 +29,7 @@ module.exports = class Receive {
 
   // Check if the event is a message or postback and
   // call the appropriate handler function
-  handleMessage() {
+  async handleMessage() {
     let event = this.webhookEvent;
 
     let responses;
@@ -43,7 +43,7 @@ module.exports = class Receive {
         } else if (message.attachments) {
           responses = this.handleAttachmentMessage();
         } else if (message.text) {
-          responses = this.handleTextMessage();
+          responses = await this.handleTextMessage();
         }
       } else if (event.postback) {
         responses = this.handlePostback();
@@ -74,7 +74,7 @@ module.exports = class Receive {
   }
 
   // Handles messages events with text
-  handleTextMessage() {
+  async handleTextMessage() {
     console.log(
       "Received text:",
       `${this.webhookEvent.message.text} for ${this.user.psid}`
@@ -105,6 +105,15 @@ module.exports = class Receive {
     } else if (message.includes(i18n.__("care.help").toLowerCase())) {
       let care = new Care(this.user, this.webhookEvent);
       response = care.handlePayload("CARE_HELP");
+    } else if (message.includes("/desc")){
+      let productId = parseInt(message.split("/desc").pop().trim());
+      response = await Response.genProductDescriptionResponse(productId);
+    } else if (message.includes("/price")){
+      let productId = parseInt(message.split("/price").pop().trim());
+      response = await Response.genProductPriceResponse(productId);
+    } else if (message.includes("/shipping")){
+      let productId = parseInt(message.split("/shipping").pop().trim());
+      response = await Response.genProductShippingFeeResponse(productId);
     } else {
       response = [
         Response.genText(

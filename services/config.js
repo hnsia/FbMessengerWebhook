@@ -21,7 +21,8 @@ const ENV_VARS = [
   "APP_SECRET",
   "VERIFY_TOKEN",
   "APP_URL",
-  "SHOP_URL"
+  "SHOP_URL",
+  "ATLAS_URI"
 ];
 
 module.exports = {
@@ -47,6 +48,9 @@ module.exports = {
 
   // Preferred port (default to 3000)
   port: process.env.PORT || 3000,
+
+  // Mongo DB connection string
+  dbConnString: process.env.ATLAS_URI,
 
   // Base URL for Messenger Platform API calls
   get apiUrl() {

@@ -10,7 +10,8 @@
 
 "use strict";
 
-const i18n = require("../i18n.config");
+const i18n = require("../i18n.config"),
+      Product = require("./database/products");
 
 module.exports = class Response {
   static genQuickReply(text, quickReplies) {
@@ -176,6 +177,54 @@ module.exports = class Response {
     const RandomlySelectedResponse = ResponsesToGreeting[Math.floor(Math.random() * ResponsesToGreeting.length)];
     let response = {
       text: `Hi ${user.firstName} ! ${RandomlySelectedResponse}`
+    };
+    
+    return response;
+  }
+
+  static async genProductDescriptionResponse(productId){
+    let productDescription;
+    try{
+      productDescription = await Product.getProductDescription(productId);
+    }
+    catch (error){
+      productDescription = "Error getting product."
+    }
+      
+    let response = {
+      text: `${productDescription}`
+    };
+    
+    return response;
+  }
+
+  static async genProductPriceResponse(productId){
+    let productPrice;
+    try{
+      productPrice = await Product.getProductPrice(productId);
+    }
+    catch (error){
+      productPrice = "Error getting product."
+    }
+      
+    let response = {
+      text: `${productPrice}`
+    };
+    
+    return response;
+  }
+
+  static async genProductShippingFeeResponse(productId){
+    let productShippingFee;
+    try{
+      productShippingFee = await Product.getProductShippingFee(productId);
+    }
+    catch (error){
+      productShippingFee = "Error getting product."
+    }
+      
+    let response = {
+      text: `${productShippingFee}`
     };
     
     return response;

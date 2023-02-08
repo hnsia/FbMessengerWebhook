@@ -20,7 +20,8 @@ const express = require("express"),
   User = require("./services/user"),
   config = require("./services/config"),
   i18n = require("./i18n.config"),
-  app = express();
+  app = express(),
+  db = require("./services/database/conn");
 
 var users = {};
 
@@ -140,7 +141,7 @@ app.post("/webhook", (req, res) => {
                   console.log(JSON.stringify(body));
                   console.log("Profile is unavailable:", error);
                 })
-                .finally(() => {
+                .finally(async () => {
                   console.log("locale: " + user.locale);
                   users[senderPsid] = user;
                   i18n.setLocale("en_US");
@@ -150,7 +151,7 @@ app.post("/webhook", (req, res) => {
                     "with locale:",
                     i18n.getLocale()
                   );
-                  return receiveAndReturn(
+                  return await receiveAndReturn(
                     users[senderPsid],
                     webhookEvent,
                     false
@@ -158,7 +159,7 @@ app.post("/webhook", (req, res) => {
                 });
             } else {
               setDefaultUser(senderPsid);
-              return receiveAndReturn(users[senderPsid], webhookEvent, false);
+              return await receiveAndReturn(users[senderPsid], webhookEvent, false);
             }
           } else {
             i18n.setLocale(users[senderPsid].locale);
@@ -168,12 +169,12 @@ app.post("/webhook", (req, res) => {
               "with locale:",
               i18n.getLocale()
             );
-            return receiveAndReturn(users[senderPsid], webhookEvent, false);
+            return await receiveAndReturn(users[senderPsid], webhookEvent, false);
           }
         } else if (user_ref != null && user_ref != undefined) {
           // Handle user_ref
           setDefaultUser(user_ref);
-          return receiveAndReturn(users[user_ref], webhookEvent, true);
+          return await receiveAndReturn(users[user_ref], webhookEvent, true);
         }
       });
     });
@@ -201,9 +202,9 @@ function isGuestUser(webhookEvent) {
   return guestUser;
 }
 
-function receiveAndReturn(user, webhookEvent, isUserRef) {
+async function receiveAndReturn(user, webhookEvent, isUserRef) {
   let receiveMessage = new Receive(user, webhookEvent, isUserRef);
-  return receiveMessage.handleMessage();
+  return await receiveMessage.handleMessage();
 }
 
 // Set up your App's Messenger Profile
@@ -297,6 +298,11 @@ config.checkEnvVariables();
 
 // Listen for requests :)
 var listener = app.listen(config.port, function () {
+  db.connectToServer(function(err){
+    if(err){
+        console.log(`Db connection error, ${err}`);
+    }
+  });
   console.log(`The app is listening on port ${listener.address().port}`);
   if (
     Object.keys(config.personas).length == 0 &&
