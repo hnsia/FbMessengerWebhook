@@ -84,7 +84,7 @@ module.exports = class Receive {
     let event = this.webhookEvent;
 
     // check greeting is here and is confident
-    let greeting = this.firstEntity(event.message.nlp, "greetings");
+    let greeting = this.getSelectedMessageTrait(event.message.nlp, "greetings");
     let message = event.message.text.trim().toLowerCase();
     // Manual check if NLP is not activated 
     const ListOfCommonGreetings = ["hi", "hello", "good morning"];
@@ -427,6 +427,9 @@ module.exports = class Receive {
   }
   firstEntity(nlp, name) {
     return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
+  }
+  getSelectedMessageTrait(nlp, name) {
+    return nlp.traits[`wit$${name}`] ? nlp.traits[`wit$${name}`][0] : undefined;
   }
 
   handleReportLeadSubmittedEvent() {
