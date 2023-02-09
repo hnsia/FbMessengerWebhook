@@ -22,7 +22,9 @@ const ENV_VARS = [
   "VERIFY_TOKEN",
   "APP_URL",
   "SHOP_URL",
-  "ATLAS_URI"
+  "ATLAS_URI",
+  "SENDGRID_API_KEY",
+  "SENDGRID_EMAIL"
 ];
 
 module.exports = {
@@ -51,6 +53,10 @@ module.exports = {
 
   // Mongo DB connection string
   dbConnString: process.env.ATLAS_URI,
+
+  // SendGrid email API key and email address
+  mailerApiKey: process.env.SENDGRID_API_KEY,
+  mailerAddress: process.env.SENDGRID_EMAIL,
 
   // Base URL for Messenger Platform API calls
   get apiUrl() {

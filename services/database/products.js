@@ -1,7 +1,4 @@
-const db = require("./conn"),
-      debug = require("debug");
-
-const expenseDebug = debug('server:expenseRoutes');
+const db = require("./conn");
 
 module.exports = class Product {
     static async getProductDescription(productId){

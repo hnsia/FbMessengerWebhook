@@ -18,7 +18,8 @@ const Curation = require("./curation"),
   Survey = require("./survey"),
   GraphApi = require("./graph-api"),
   i18n = require("../i18n.config"),
-  config = require("./config");
+  config = require("./config"),
+  Mail = require("./mailer");
 
 module.exports = class Receive {
   constructor(user, webhookEvent, isUserRef) {
@@ -114,6 +115,9 @@ module.exports = class Receive {
     } else if (message.includes("/shipping")){
       let productId = parseInt(message.split("/shipping").pop().trim());
       response = await Response.genProductShippingFeeResponse(productId);
+    } else if (message.includes("/buy")){
+      let productId = parseInt(message.split("/buy").pop().trim());
+      response = await Mail.sendMail(productId, this.user);
     } else {
       response = [
         Response.genText(
